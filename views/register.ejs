@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Face Registration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    video {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:disabled {
+      background: #94a3b8;
+    }
+    .status {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Register Face</h2>
+
+  <video id="video" autoplay playsinline></video>
+
+  <input type="text" id="name" placeholder="Enter your name" required>
+
+  <button id="captureBtn" onclick="capture()">Capture & Register</button>
+
+  <div class="status" id="status"></div>
+</div>
+
+<canvas id="canvas" style="display:none;"></canvas>
+
+<script>
+const video = document.getElementById("video");
+const status = document.getElementById("status");
+const btn = document.getElementById("captureBtn");
+
+navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+  .then(stream => video.srcObject = stream)
+  .catch(() => status.textContent = "Camera access denied");
+
+function capture() {
+  const name = document.getElementById("name").value.trim();
+  if (!name) {
+    status.textContent = "Please enter name";
+    return;
+  }
+
+  btn.disabled = true;
+  status.textContent = "Processing...";
+
+  const canvas = document.getElementById("canvas");
+  const scale = 640 / Math.max(video.videoWidth, video.videoHeight);
+
+  canvas.width = video.videoWidth * scale;
+  canvas.height = video.videoHeight * scale;
+
+  canvas.getContext("2d").drawImage(
+    video, 0, 0, canvas.width, canvas.height
+  );
+
+  canvas.toBlob(blob => {
+    const form = new FormData();
+    form.append("image", blob, "face.jpg");
+    form.append("name", name);
+
+    fetch("/register", { method: "POST", body: form })
+      .then(res => res.json())
+      .then(() => {
+        status.textContent = "Face registered successfully ✅";
+        btn.disabled = false;
+      })
+      .catch(() => {
+        status.textContent = "Registration failed ❌";
+        btn.disabled = false;
+      });
+  }, "image/jpeg", 0.8);
+}
+</script>
+
+</body>
+</html>
