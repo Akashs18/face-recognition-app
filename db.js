@@ -1,9 +1,12 @@
 const { Pool } = require("pg");
 
-module.exports = new Pool({
-  user: "demo_etml_user",
-  host: "dpg-d5ks4eogjchc73bobkk0-a.oregon-postgres.render.com",
-  database: "attendance",
-  password: "Il0rZKXu7WDPWHm6DA4ViCfFtk9IxRA9",
-  port: 5432
+const pool = new Pool({
+  user: "postgres",
+  host: "localhost",   // IMPORTANT: IPv4 only
+  database: "face_app",
+  password: "123456",
+  port: 5432,
+  ssl: false
 });
+
+module.exports = pool;

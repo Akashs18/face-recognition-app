@@ -84,7 +84,13 @@ function capture() {
   status.textContent = "Processing...";
 
   const canvas = document.getElementById("canvas");
-  const scale = 640 / Math.max(video.videoWidth, video.videoHeight);
+  const maxSize = 640;
+  const scale = Math.min(
+    maxSize / video.videoWidth,
+    maxSize / video.videoHeight,
+    1
+ );
+
 
   canvas.width = video.videoWidth * scale;
   canvas.height = video.videoHeight * scale;

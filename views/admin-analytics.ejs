@@ -1,0 +1,18 @@
+<h2>Attendance Analytics</h2>
+
+<table border="1">
+<tr>
+  <th>Name</th>
+  <th>Total Days</th>
+  <th>Late Days</th>
+</tr>
+
+<% rows.forEach(r => { %>
+<tr>
+  <td><%= r.name %></td>
+  <td><%= r.total_days %></td>
+  <td><%= r.late_days %></td>
+</tr>
+<% }) %>
+</table>
+

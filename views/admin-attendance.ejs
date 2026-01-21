@@ -1,0 +1,17 @@
+<h2>Today's Attendance</h2>
+
+<table border="1">
+<tr>
+  <th>Name</th>
+  <th>Time</th>
+  <th>Status</th>
+</tr>
+
+<% rows.forEach(r => { %>
+<tr>
+  <td><%= r.name %></td>
+  <td><%= r.time %></td>
+  <td><%= r.status %></td>
+</tr>
+<% }) %>
+</table>

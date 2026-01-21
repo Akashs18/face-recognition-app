@@ -6,104 +6,242 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+    :root {
+      --header-bg: #1f2937;
+      --header-text: #fff;
+      --sidebar-bg: #111827;
+      --sidebar-text: #fff;
+      --sidebar-hover: #374151;
+      --card-bg: #ffffff;
+      --card-shadow: rgba(0, 0, 0, 0.1);
+      --btn-bg: #16a34a;
+      --btn-hover: #15803d;
+      --btn-disabled: #94a3b8;
+      --text-base: #333;
+      --bg-body: #f4f6f8;
     }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background: var(--bg-body);
+      overflow: hidden;
+    }
+
+    /* Top bar */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--header-bg);
+      color: var(--header-text);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      bottom: 0;
+      width: 220px;
+      background: var(--sidebar-bg);
+      color: var(--sidebar-text);
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sidebar a {
+      padding: 12px 18px;
+      text-decoration: none;
+      color: var(--sidebar-text);
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .sidebar a:hover {
+      background: var(--sidebar-hover);
+    }
+
+    /* Main content */
+    .main-content {
+      margin-top: 60px;
+      margin-left: 220px;
+      padding: 30px 25px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
     .card {
-      background: white;
+      background: var(--card-bg);
       padding: 20px;
       border-radius: 8px;
-      width: 320px;
+      width: 100%;
+      max-width: 380px;
+      margin: auto;
       text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px var(--card-shadow);
     }
+    .card h2 {
+      margin-bottom: 15px;
+      color: var(--text-base);
+    }
+
     video {
       width: 100%;
       border-radius: 8px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
+
     button {
       width: 100%;
       padding: 10px;
-      background: #16a34a;
+      background: var(--btn-bg);
       color: white;
       border: none;
       cursor: pointer;
-      border-radius: 4px;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: background 0.2s ease;
+    }
+    button:hover {
+      background: var(--btn-hover);
     }
     button:disabled {
-      background: #94a3b8;
+      background: var(--btn-disabled);
+      cursor: not-allowed;
     }
+
     .status {
       margin-top: 10px;
       font-size: 14px;
       font-weight: bold;
+      color: var(--text-base);
     }
   </style>
 </head>
 <body>
 
-<div class="card">
-  <h2>Mark Attendance</h2>
+  <!-- Top Bar -->
+  <div class="topbar">Face Attendance</div>
 
-  <video id="video" autoplay playsinline></video>
+  <!-- Sidebar -->
+  <!-- Sidebar or Navbar -->
+<div class="sidebar">
+  <% if (user && user.role === "ADMIN") { %>
+    <a href="/admin/dashboard">Dashboard</a>
+  <% } else { %>
+    <a href="/employee/dashboard">Dashboard</a>
+  <% } %>
 
-  <button id="markBtn" onclick="markAttendance()">Mark Attendance</button>
-
-  <div class="status" id="status"></div>
+  <a href="/attendance-page">Mark Attendance</a>
+  <a href="/logout">Logout</a>
 </div>
 
-<canvas id="canvas" style="display:none;"></canvas>
 
-<script>
-const video = document.getElementById("video");
-const status = document.getElementById("status");
-const btn = document.getElementById("markBtn");
+  <!-- Main Content -->
+  <div class="main-content">
 
-navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-  .then(stream => video.srcObject = stream)
-  .catch(() => status.textContent = "Camera access denied");
+    <div class="card">
+      <h2>Mark Attendance</h2>
 
-function markAttendance() {
-  btn.disabled = true;
-  status.textContent = "Recognizing...";
+      <video id="video" autoplay playsinline></video>
 
-  const canvas = document.getElementById("canvas");
-  const scale = 640 / Math.max(video.videoWidth, video.videoHeight);
+      <button id="markBtn" onclick="markAttendance()">Mark Attendance</button>
 
-  canvas.width = video.videoWidth * scale;
-  canvas.height = video.videoHeight * scale;
+      <div class="status" id="status"></div>
+    </div>
 
-  canvas.getContext("2d").drawImage(
-    video, 0, 0, canvas.width, canvas.height
-  );
+  </div>
 
-  canvas.toBlob(blob => {
-    const form = new FormData();
-    form.append("image", blob, "face.jpg");
+  <canvas id="canvas" style="display:none;"></canvas>
 
-    fetch("/attendance", { method: "POST", body: form })
-      .then(res => res.json())
-      .then(data => {
-        if (data.recognized) {
-          status.textContent = "Attendance marked ✅";
-        } else {
-          status.textContent = "Face not recognized ❌";
-        }
+  <script>
+  const video = document.getElementById("video");
+  const status = document.getElementById("status");
+  const btn = document.getElementById("markBtn");
+
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+    .then(stream => video.srcObject = stream)
+    .catch(() => status.textContent = "Camera access denied");
+
+  async function markAttendance() {
+    if (!navigator.geolocation) {
+      status.textContent = "Geolocation not supported";
+      return;
+    }
+
+    btn.disabled = true;
+    status.textContent = "Getting location...";
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        status.textContent = "Recognizing face...";
+
+        const canvas = document.getElementById("canvas");
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+
+        canvas.toBlob(async (blob) => {
+          const form = new FormData();
+          form.append("image", blob, "face.jpg");
+          form.append("latitude", lat);
+          form.append("longitude", lng);
+
+          try {
+            const res = await fetch("/attendance", {
+              method: "POST",
+              body: form
+            });
+
+            const data = await res.json();
+
+            if (data.recognized) {
+              status.textContent = `Attendance marked ✅ (${data.status})`;
+            } else {
+              status.textContent = "Face not recognized ❌";
+            }
+
+          } catch (e) {
+            status.textContent = "Server error ❌";
+          } finally {
+            btn.disabled = false;
+          }
+        }, "image/jpeg", 0.8);
+      },
+      (err) => {
+        status.textContent = "Location permission denied ❌";
         btn.disabled = false;
-      })
-      .catch(() => {
-        status.textContent = "Error occurred ❌";
-        btn.disabled = false;
-      });
-  }, "image/jpeg", 0.8);
-}
-</script>
+        console.error(err);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000
+      }
+    );
+  }
+  </script>
 
 </body>
 </html>

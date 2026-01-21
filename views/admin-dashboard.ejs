@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+
+  <style>
+    /* Colors & global */
+    :root {
+      --header-bg: #1f2937;
+      --header-text: #fff;
+      --sidebar-bg: #111827;
+      --sidebar-text: #fff;
+      --sidebar-hover: #374151;
+      --primary: #2563eb;
+      --primary-hover: #1e40af;
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --bg-light: #ffffff;
+      --bg-muted: #f9fafb;
+      --text-base: #333;
+      --border: #e2e8f0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background: var(--bg-muted);
+      overflow: hidden;
+    }
+
+    /* Top bar */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: var(--header-bg);
+      color: var(--header-text);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 220px;
+      bottom: 0;
+      background: var(--sidebar-bg);
+      color: var(--sidebar-text);
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sidebar a {
+      padding: 12px 18px;
+      text-decoration: none;
+      color: var(--sidebar-text);
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .sidebar a:hover {
+      background: var(--sidebar-hover);
+    }
+
+    /* Main content */
+    .main-content {
+      margin-top: 60px;
+      margin-left: 220px;
+      padding: 25px 30px;
+      overflow-y: auto;
+      flex: 1;
+      height: calc(100vh - 60px);
+    }
+
+    header.page-title {
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+
+    .card {
+      background: var(--bg-light);
+      padding: 22px 28px;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+    }
+
+    .card h2 {
+      font-size: 1.35rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      text-align: center;
+      cursor: pointer;
+      margin-top: 10px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-accent:hover {
+      background: var(--accent-hover);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 28px;
+      background: var(--bg-light);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    th {
+      background: var(--primary);
+      color: white;
+      text-transform: uppercase;
+      font-size: 0.95rem;
+    }
+
+    table td:nth-child(1),
+    table th:nth-child(1) {
+      text-align: left;
+    }
+    table td:nth-child(n+2),
+    table th:nth-child(n+2) {
+      text-align: center;
+    }
+
+    tr:nth-child(even) {
+      background: var(--bg-muted);
+    }
+
+    tr:hover {
+      background: #eef2ff;
+    }
+
+    h2.section-title {
+      margin-top: 35px;
+      font-size: 1.5rem;
+      color: var(--primary);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    Admin Dashboard
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="/attendance-page">Attendance System</a>
+    <a href="/logout">Logout</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+
+    <!-- Page Title -->
+    <header class="page-title">User Management</header>
+
+    <!-- User Management Card -->
+    <div class="card">
+      <h2>Manage Users</h2>
+
+      <!-- Register Face Button -->
+      <a href="/register-page" class="btn btn-primary">Register Face</a>
+
+      <div class="form-group">
+        <input id="name" placeholder="Name">
+      </div>
+      <div class="form-group">
+        <input id="email" placeholder="Email">
+      </div>
+      <div class="form-group">
+        <input id="password" type="password" placeholder="Password">
+      </div>
+      <div class="form-group">
+        <select id="role">
+          <option value="EMPLOYEE">EMPLOYEE</option>
+          <option value="ADMIN">ADMIN</option>
+        </select>
+      </div>
+
+      <button class="btn btn-accent" onclick="createUser()">Create User</button>
+      <p id="status"></p>
+    </div>
+
+    <!-- Today’s Attendance Table -->
+    <h2 class="section-title">Today's Attendance</h2>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Address</th>
+      </tr>
+      <% if (today && today.length > 0) { %>
+        <% today.forEach(r => { %>
+          <tr>
+            <td><%= r.name %></td>
+            <td><%= r.attendance_time %></td>
+            <td><%= r.status %></td>
+            <td><%= r.address %></td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr><td colspan="4">No attendance for today</td></tr>
+      <% } %>
+    </table>
+
+    <div class="card">
+  <h2>📅 Monthly Attendance Export</h2>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <select id="month">
+      <option value="1">January</option>
+      <option value="2">February</option>
+      <option value="3">March</option>
+      <option value="4">April</option>
+      <option value="5">May</option>
+      <option value="6">June</option>
+      <option value="7">July</option>
+      <option value="8">August</option>
+      <option value="9">September</option>
+      <option value="10">October</option>
+      <option value="11">November</option>
+      <option value="12">December</option>
+    </select>
+
+    <input
+      id="year"
+      type="number"
+      placeholder="Year"
+      value="<%= new Date().getFullYear() %>"
+    />
+  </div>
+
+  <br>
+  <button onclick="exportMonthly()">📥 Export Monthly Excel</button>
+</div>
+
+
+    <!-- Monthly Attendance -->
+    <h2 class="section-title">Monthly Attendance Summary</h2>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Days Present</th>
+      </tr>
+      <% if (monthly && monthly.length > 0) { %>
+        <% monthly.forEach(r => { %>
+          <tr>
+            <td><%= r.name %></td>
+            <td><%= r.days_present %></td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr><td colspan="2">No monthly data available</td></tr>
+      <% } %>
+    </table>
+
+    <!-- Late Attendance -->
+    <h2 class="section-title">Late Attendance Count</h2>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Late Days</th>
+      </tr>
+      <% if (late && late.length > 0) { %>
+        <% late.forEach(r => { %>
+          <tr>
+            <td><%= r.name %></td>
+            <td><%= r.late_days %></td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr><td colspan="2">No late records</td></tr>
+      <% } %>
+    </table>
+    <button onclick="exportExcel()" style="margin-bottom:15px;">
+  📥 Export to Excel
+</button>
+
+
+  </div>
+
+  <script>
+    async function createUser() {
+      const name  = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const role = document.getElementById("role").value;
+
+      const res = await fetch("/admin/create-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("token")
+        },
+        body: JSON.stringify({ name, email, password, role })
+      });
+
+      const data = await res.json();
+      document.getElementById("status").innerText =
+        data.error || "User created successfully!";
+    }
+    function exportExcel() {
+  window.location.href = "/admin/export/today";
+}
+
+function exportMonthly() {
+    const month = document.getElementById("month").value;
+    const year = document.getElementById("year").value;
+
+    if (!month || !year) {
+      alert("Select month and year");
+      return;
+    }
+
+    // triggers file download (cookie-based auth works)
+    window.location.href = `/admin/export/monthly?month=${month}&year=${year}`;
+}
+  </script>
+
+</body>
+</html>

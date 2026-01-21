@@ -1,0 +1,15 @@
+<h2>Late Attendance Report</h2>
+
+<table border="1" cellpadding="8">
+<tr>
+  <th>Name</th>
+  <th>Late Days</th>
+</tr>
+
+<% rows.forEach(r => { %>
+<tr>
+  <td><%= r.name %></td>
+  <td><%= r.late_days %></td>
+</tr>
+<% }) %>
+</table>
