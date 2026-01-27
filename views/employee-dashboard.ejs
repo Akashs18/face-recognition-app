@@ -6,56 +6,147 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="min-h-screen bg-gray-100 flex">
+<body class="min-h-screen bg-slate-100 flex font-sans">
 
   <!-- Sidebar -->
-  <aside
-    class="fixed top-0 left-0 h-full w-60 bg-gray-800 text-white flex flex-col"
-  >
+  <aside class="fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white">
     <div class="text-2xl font-bold text-center py-6 border-b border-gray-700">
-      Employee
+      Attendance
     </div>
-    <nav class="flex flex-col px-4 py-6 gap-4">
-      <a href="/employee-dashboard"
-         class="px-4 py-3 rounded-md bg-gray-900 hover:bg-gray-700 transition">
-        Dashboard
+
+    <nav class="flex flex-col px-4 py-6 gap-3">
+      <a href="/employee/dashboard"
+         class="px-4 py-3 rounded-lg bg-gray-900 shadow">
+        🏠 Dashboard
       </a>
       <a href="/attendance-page"
-         class="px-4 py-3 rounded-md hover:bg-gray-700 transition">
-        Mark Attendance
+         class="px-4 py-3 rounded-lg hover:bg-gray-700 transition">
+        📸 Mark Attendance
       </a>
       <a href="/logout"
-         class="px-4 py-3 rounded-md hover:bg-gray-700 transition">
-        Logout
+         class="px-4 py-3 rounded-lg hover:bg-red-600/70 transition">
+        🚪 Logout
       </a>
     </nav>
   </aside>
 
-  <!-- Main Content Area -->
-  <div class="flex-1 flex flex-col ml-60">
+  <!-- Main -->
+  <div class="flex-1 ml-64 flex flex-col">
 
-    <!-- Top Navbar -->
-    <header class="w-full bg-indigo-600 text-white py-4 px-6 shadow-md">
-      <h1 class="text-2xl font-semibold">Employee Dashboard</h1>
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-6 px-8 shadow-lg">
+      <h1 class="text-3xl font-bold tracking-wide">Employee Dashboard</h1>
+      <p class="text-sm opacity-80">Face Recognition Attendance System</p>
     </header>
 
-    <!-- Body Content -->
-    <main class="flex-grow flex items-center justify-center px-6 py-10">
-      <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md text-center">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">
-          Welcome!
-        </h1>
+    <!-- Content -->
+    <main class="flex-grow px-8 py-10 grid gap-6 grid-cols-1 lg:grid-cols-2">
 
+      <!-- Profile Card -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 flex items-center gap-6 hover:shadow-xl transition">
+        <div
+          id="avatar"
+          class="w-20 h-20 rounded-full bg-indigo-600 text-white flex items-center justify-center text-3xl font-bold shadow-md">
+          E
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800">
+            Welcome, <span id="empName">Employee</span>
+          </h2>
+          <p class="text-gray-500">Have a productive day 🚀</p>
+        </div>
+      </div>
+
+      <!-- Attendance Status -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition">
+        <h3 class="text-xl font-semibold mb-4">📅 Today’s Attendance</h3>
+
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500">Status</p>
+            <p id="statusText" class="text-2xl font-bold text-gray-800">
+              Checking...
+            </p>
+            <p id="timeText" class="text-sm text-gray-500"></p>
+          </div>
+
+          <span id="statusBadge"
+                class="animate-pulse px-5 py-2 rounded-full text-white text-sm font-semibold bg-gray-400">
+            --
+          </span>
+        </div>
+
+        <!-- Progress Ring -->
+        <div class="mt-6 flex items-center gap-4">
+          <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div id="progressBar"
+                 class="h-full w-0 bg-indigo-600 transition-all duration-700"></div>
+          </div>
+          <span id="progressText" class="text-sm font-semibold text-gray-600">
+            0%
+          </span>
+        </div>
+      </div>
+
+      <!-- Action Card -->
+      <div class="bg-white rounded-2xl shadow-lg p-8 text-center col-span-1 lg:col-span-2 hover:shadow-xl transition">
+        <h3 class="text-2xl font-bold mb-3">Mark Your Attendance</h3>
+        <p class="text-gray-500 mb-6">
+          Use face recognition to mark today’s attendance
+        </p>
         <a
           href="/attendance-page"
-          class="inline-block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition"
+          class="inline-flex items-center justify-center gap-3 w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 text-white font-semibold py-4 rounded-xl transition text-lg shadow-lg"
         >
-          Mark Attendance
+          📸 Mark Attendance Now
         </a>
       </div>
-    </main>
 
+    </main>
   </div>
+
+<script>
+async function loadStatus() {
+  try {
+    const res = await fetch("/employee/attendance-status", {
+      credentials: "include"
+    });
+    const data = await res.json();
+
+    document.getElementById("empName").innerText = data.name;
+    document.getElementById("avatar").innerText = data.name[0].toUpperCase();
+
+    if (!data.marked) {
+      setStatus("Not Marked", "PENDING", "bg-gray-500", 30);
+      return;
+    }
+
+    if (data.status === "ON_TIME") {
+      setStatus("On Time", "ON TIME", "bg-green-600", 100, data.time);
+    } else {
+      setStatus("Late", "LATE", "bg-red-600", 100, data.time);
+    }
+
+  } catch {
+    setStatus("Error", "ERROR", "bg-gray-500", 0);
+  }
+}
+
+function setStatus(text, badge, color, progress, time = "") {
+  document.getElementById("statusText").innerText = text;
+  document.getElementById("statusBadge").innerText = badge;
+  document.getElementById("statusBadge").className =
+    `px-5 py-2 rounded-full text-white text-sm font-semibold ${color}`;
+
+  document.getElementById("progressBar").style.width = progress + "%";
+  document.getElementById("progressText").innerText = progress + "%";
+
+  document.getElementById("timeText").innerText =
+    time ? "Marked at " + time : "";
+}
+
+loadStatus();
+</script>
 
 </body>
 </html>

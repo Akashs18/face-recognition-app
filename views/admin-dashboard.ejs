@@ -5,202 +5,261 @@
   <title>Admin Dashboard</title>
 
   <style>
-    /* Colors & global */
-    :root {
-      --header-bg: #1f2937;
-      --header-text: #fff;
-      --sidebar-bg: #111827;
-      --sidebar-text: #fff;
-      --sidebar-hover: #374151;
-      --primary: #2563eb;
-      --primary-hover: #1e40af;
-      --accent: #10b981;
-      --accent-hover: #059669;
-      --bg-light: #ffffff;
-      --bg-muted: #f9fafb;
-      --text-base: #333;
-      --border: #e2e8f0;
-    }
+   /* =====================
+   THEME VARIABLES
+===================== */
+:root {
+  --header-bg: #0f172a;
+  --sidebar-bg: #020617;
+  --sidebar-hover: #1e293b;
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Segoe UI", Tahoma, sans-serif;
-    }
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
 
-    body {
-      display: flex;
-      min-height: 100vh;
-      background: var(--bg-muted);
-      overflow: hidden;
-    }
+  --accent: #10b981;
+  --accent-hover: #059669;
 
-    /* Top bar */
-    .topbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background: var(--header-bg);
-      color: var(--header-text);
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      z-index: 100;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
+  --bg-light: #ffffff;
+  --bg-muted: #f1f5f9;
 
-    /* Sidebar */
-    .sidebar {
-      position: fixed;
-      top: 60px;
-      left: 0;
-      width: 220px;
-      bottom: 0;
-      background: var(--sidebar-bg);
-      color: var(--sidebar-text);
-      padding-top: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
 
-    .sidebar a {
-      padding: 12px 18px;
-      text-decoration: none;
-      color: var(--sidebar-text);
-      font-weight: 600;
-      transition: background 0.2s;
-    }
+  --border: #e5e7eb;
+  --radius: 12px;
+}
 
-    .sidebar a:hover {
-      background: var(--sidebar-hover);
-    }
+/* =====================
+   RESET & BASE
+===================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
 
-    /* Main content */
-    .main-content {
-      margin-top: 60px;
-      margin-left: 220px;
-      padding: 25px 30px;
-      overflow-y: auto;
-      flex: 1;
-      height: calc(100vh - 60px);
-    }
+body {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-muted);
+  overflow: hidden;
+  color: var(--text-dark);
+}
 
-    header.page-title {
-      margin-bottom: 20px;
-      font-size: 1.8rem;
-      color: var(--primary);
-    }
+/* =====================
+   TOP BAR
+===================== */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  background: linear-gradient(90deg, #020617, #0f172a);
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  z-index: 100;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+}
 
-    .card {
-      background: var(--bg-light);
-      padding: 22px 28px;
-      border-radius: 8px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
-      margin-bottom: 30px;
-    }
+/* =====================
+   SIDEBAR
+===================== */
+.sidebar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  width: 240px;
+  bottom: 0;
+  background: var(--sidebar-bg);
+  padding: 24px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-    .card h2 {
-      font-size: 1.35rem;
-      color: var(--primary);
-      margin-bottom: 12px;
-      font-weight: bold;
-    }
+.sidebar a {
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: #e5e7eb;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
 
-    .form-group {
-      margin-bottom: 12px;
-    }
+.sidebar a:hover {
+  background: var(--sidebar-hover);
+  color: white;
+  transform: translateX(4px);
+}
 
-    input, select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 1rem;
-    }
+/* =====================
+   MAIN CONTENT
+===================== */
+.main-content {
+  margin-top: 64px;
+  margin-left: 240px;
+  padding: 30px 36px;
+  overflow-y: auto;
+  flex: 1;
+  height: calc(100vh - 64px);
+}
 
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 6px;
-      text-align: center;
-      cursor: pointer;
-      margin-top: 10px;
-      text-decoration: none;
-    }
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+  color: var(--primary);
+}
 
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
+/* =====================
+   CARDS
+===================== */
+.card {
+  background: var(--bg-light);
+  padding: 28px 32px;
+  border-radius: var(--radius);
+  box-shadow: 0 12px 30px rgba(15,23,42,0.08);
+  margin-bottom: 36px;
+  transition: transform 0.2s ease;
+}
 
-    .btn-primary:hover {
-      background: var(--primary-hover);
-    }
+.card:hover {
+  transform: translateY(-2px);
+}
 
-    .btn-accent {
-      background: var(--accent);
-      color: white;
-    }
+.card h2 {
+  font-size: 1.4rem;
+  margin-bottom: 18px;
+  color: var(--text-dark);
+}
 
-    .btn-accent:hover {
-      background: var(--accent-hover);
-    }
+/* =====================
+   FORMS
+===================== */
+.form-group {
+  margin-bottom: 14px;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 28px;
-      background: var(--bg-light);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
+input, select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  background: #f8fafc;
+  transition: border 0.2s, box-shadow 0.2s;
+}
 
-    th, td {
-      padding: 12px 15px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: middle;
-    }
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
 
-    th {
-      background: var(--primary);
-      color: white;
-      text-transform: uppercase;
-      font-size: 0.95rem;
-    }
+/* =====================
+   BUTTONS
+===================== */
+.btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.25s ease;
+}
 
-    table td:nth-child(1),
-    table th:nth-child(1) {
-      text-align: left;
-    }
-    table td:nth-child(n+2),
-    table th:nth-child(n+2) {
-      text-align: center;
-    }
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
 
-    tr:nth-child(even) {
-      background: var(--bg-muted);
-    }
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
 
-    tr:hover {
-      background: #eef2ff;
-    }
+.btn-accent {
+  background: var(--accent);
+  color: white;
+}
 
-    h2.section-title {
-      margin-top: 35px;
-      font-size: 1.5rem;
-      color: var(--primary);
-      border-bottom: 2px solid var(--border);
-      padding-bottom: 6px;
-    }
+.btn-accent:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+/* =====================
+   TABLES
+===================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-light);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(15,23,42,0.06);
+  margin-bottom: 36px;
+}
+
+th {
+  background: var(--primary);
+  color: white;
+  padding: 14px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+td {
+  padding: 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
+tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+tr:hover {
+  background: #eef2ff;
+}
+
+/* =====================
+   SECTION HEADERS
+===================== */
+.section-title {
+  margin: 40px 0 18px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+}
+
+.action-row {
+  margin-bottom: 22px;
+}
+
+
   </style>
 </head>
 <body>
@@ -227,7 +286,10 @@
       <h2>Manage Users</h2>
 
       <!-- Register Face Button -->
-      <a href="/register-page" class="btn btn-primary">Register Face</a>
+      <div class="action-row">
+  <a href="/register-page" class="btn btn-primary">Register Face</a>
+</div>
+
 
       <div class="form-group">
         <input id="name" placeholder="Name">
