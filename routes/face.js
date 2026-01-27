@@ -5,7 +5,9 @@ const FormData = require("form-data");
 const fs = require("fs");
 const path = require("path");
 const db = require("../db");
-
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
+const { authenticate } = require("../middleware/auth");
 const router = express.Router();
 
 const PYTHON_SERVICE_URL = "http://127.0.0.1:8001/embed";
@@ -205,6 +207,63 @@ router.post("/attendance", upload.single("image"), async (req, res) => {
   }
 });
 
+/* ===========================
+   FACE LOGIN (ADMIN / EMPLOYEE)
+=========================== */
+router.post("/face-login", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "Image required" });
+    }
+
+    const embedding = await getEmbedding(req.file.path);
+
+    const users = await db.query(
+      `SELECT id, name, role, embedding
+       FROM users
+       WHERE role IN ('ADMIN', 'EMPLOYEE')`
+    );
+
+    let best = { score: 0, user: null };
+
+    for (const u of users.rows) {
+      const score = cosineSimilarity(u.embedding, embedding);
+      if (score > best.score) {
+        best = { score, user: u };
+      }
+    }
+
+    if (!best.user || best.score < FACE_THRESHOLD) {
+      return res.status(401).json({ error: "Face not recognized" });
+    }
+
+    const token = jwt.sign(
+      { userId: best.user.id, role: best.user.role },
+      JWT_SECRET,
+      { expiresIn: "8h" }
+    );
+
+    return res
+      .cookie("token", token, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production"
+      })
+      .json({
+        success: true,
+        role: best.user.role,
+        name: best.user.name
+      });
+
+  } catch (e) {
+    console.error("FACE LOGIN ERROR:", e.message);
+    res.status(500).json({ error: "Face login failed" });
+  } finally {
+    if (req.file) fs.unlink(req.file.path, () => {});
+  }
+});
+
+
 
 
 /* ===========================
@@ -218,5 +277,47 @@ router.get("/db-test", async (_, res) => {
     res.status(500).json({ error: e.message });
   }
 });
+
+
+router.post("/attendance", authenticate, upload.single("image"), async (req, res) => {
+  const embedding = await getEmbedding(req.file.path);
+  const { latitude, longitude } = req.body;
+
+  const user = await db.query(
+    "SELECT id, embedding FROM users WHERE id=$1",
+    [req.user.id]
+  );
+
+  const score = cosineSimilarity(
+    user.rows[0].embedding,
+    embedding
+  );
+
+  if (score < 0.45)
+    return res.status(401).json({ error: "Face mismatch" });
+
+  const exists = await db.query(
+    `SELECT 1 FROM attendance 
+     WHERE user_id=$1 AND attendance_date=CURRENT_DATE`,
+    [req.user.id]
+  );
+
+  if (exists.rowCount)
+    return res.json({ message: "Already marked today" });
+
+  const address = await reverseGeocode(latitude, longitude);
+
+  await db.query(
+    `INSERT INTO attendance
+     (user_id, status, latitude, longitude, address)
+     VALUES ($1,$2,$3,$4,$5)`,
+    [req.user.id, getStatus(), latitude, longitude, address]
+  );
+
+  res.json({ success: true });
+});
+
+
+
 
 module.exports = router;

@@ -7,6 +7,7 @@ const authRoutes = require("./routes/auth");
 const { authenticate, requireAdmin } = require("./middleware/auth");
 
 const app = express();
+const PORT=3000;
 
 
 /* ===========================
@@ -126,5 +127,9 @@ app.get("/employee-dashboard", authenticate, (req, res) => {
 /* ===========================
    SERVER
 =========================== */
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+  
+app.listen(PORT, () => {
+  console.log(`✅ Server running at http://localhost:${PORT}`);
+});
